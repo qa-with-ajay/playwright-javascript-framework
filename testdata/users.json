@@ -1,0 +1,17 @@
+[
+  {
+    "testname": "TC01",
+    "username": "alice",
+    "password": "Password123"
+  },
+  {
+    "testname": "TC02",
+    "username": "bob",
+    "password": "SecurePass456"
+  },
+  {
+    "testname": "TC03",
+    "username": "charlie",
+    "password": "TestPass789"
+  }
+]
