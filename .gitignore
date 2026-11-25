@@ -1,13 +1,22 @@
-
-# Playwright
+# Dependencies
 node_modules/
+
+# Playwright output
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-/allure-results
 /playwright/.auth/
+/allure-results/
+/allure-report/
+
+# Environment and secrets
 .env*
+!.env.example
 *auth.json
-/auth
+/auth/
 *secrets.json
+
+# Local logs and generated artifacts
+logs/*.log
+screenshots/

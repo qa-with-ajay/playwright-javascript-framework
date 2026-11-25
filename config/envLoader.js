@@ -1,14 +1,20 @@
-import dotenv from 'dotenv';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import dotenv from "dotenv";
+import path from "node:path";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+export function loadEnv(defaultEnvironment = "local") {
+  const environment = process.env.ENV || process.env.ENVIRONMENT || defaultEnvironment;
+  const envPath = path.resolve(process.cwd(), `.env.${environment}`);
+  const result = dotenv.config({ path: envPath });
 
-export function loadEnv(envName) {
-  const targetEnv = process.env.ENV || envName || 'qa';
-  // Correct path resolution
-  const envPath = resolve(__dirname, `./env/.env.${targetEnv}`);
-  console.log(`Loading env file: ${envPath}`);
-  dotenv.config({ path: envPath });
-  console.log(`Running tests on environment: ${targetEnv}`);
+  if (result.error) {
+    if (result.error.code === "ENOENT") {
+      console.warn(`[env] ${path.basename(envPath)} not found; using existing process environment variables.`);
+    } else {
+      throw result.error;
+    }
+  } else {
+    console.info(`[env] Loaded ${path.basename(envPath)} (secret values are not logged).`);
+  }
+
+  return environment;
 }
