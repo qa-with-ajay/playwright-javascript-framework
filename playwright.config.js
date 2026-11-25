@@ -8,7 +8,7 @@ import config  from './config/globalConfig.js';
 
 export default defineConfig({
   testDir: './tests',
-  // timeout: 15*1000,
+  timeout: 15*1000,
   // expect:{
   //   timeout: 10*1000
   // },
