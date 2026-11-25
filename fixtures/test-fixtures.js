@@ -1,41 +1,21 @@
-import { test as base, expect } from '@playwright/test';
-import config from '../config/globalConfig';
-import logger from '../utils/logger'
+import { test as base, expect } from "@playwright/test";
+import config from "../config/globalConfig.js";
+import logger from "../utils/logger.js";
 
-// Import your page objects
-import { LoginPage } from '../pageobjects/rahulshettyacademy/LoginPage';
-import { DashboardPage } from '../pageobjects/rahulshettyacademy/DashboardPage';
-import { CartPage } from '../pageobjects/rahulshettyacademy/CartPage';
-import { CheckoutPage } from '../pageobjects/rahulshettyacademy/CheckoutPage';
-import { ConfirmationPage } from '../pageobjects/rahulshettyacademy/ConfirmationPage';
-import { OrderHistoryPage } from '../pageobjects/rahulshettyacademy/OrderHistoryPage';
+import { LoginPage } from "../pageobjects/rahulshettyacademy/LoginPage.js";
+import { DashboardPage } from "../pageobjects/rahulshettyacademy/DashboardPage.js";
+import { CartPage } from "../pageobjects/rahulshettyacademy/CartPage.js";
+import { CheckoutPage } from "../pageobjects/rahulshettyacademy/CheckoutPage.js";
+import { ConfirmationPage } from "../pageobjects/rahulshettyacademy/ConfirmationPage.js";
+import { OrderHistoryPage } from "../pageobjects/rahulshettyacademy/OrderHistoryPage.js";
 
-
-// Extend the base test with fixtures for page objects
 const test = base.extend({
-  loginPage: async ({ page }, use) => {
-    await use(new LoginPage(page));
-  },
-
-  dashboardPage: async ({ page }, use) => {
-    await use(new DashboardPage(page));
-  },
-
-  CartPage: async ({ page }, use) => {
-    await use(new CartPage(page));
-  },
-
-  CheckoutPage: async ({ page }, use) => {
-    await use(new CheckoutPage(page));
-  },
-
-  ConfirmationPage: async ({ page }, use) => {
-    await use(new ConfirmationPage(page));
-  },
-
-  OrderHistoryPage: async ({ page }, use) => {
-    await use(new OrderHistoryPage(page));
-  },
+  loginPage: async ({ page }, use) => use(new LoginPage(page)),
+  dashboardPage: async ({ page }, use) => use(new DashboardPage(page)),
+  CartPage: async ({ page }, use) => use(new CartPage(page)),
+  CheckoutPage: async ({ page }, use) => use(new CheckoutPage(page)),
+  ConfirmationPage: async ({ page }, use) => use(new ConfirmationPage(page)),
+  OrderHistoryPage: async ({ page }, use) => use(new OrderHistoryPage(page))
 });
 
-export { test, expect, config, logger};
+export { test, expect, config, logger };
