@@ -34,6 +34,7 @@ test.describe("SALE-001 · GST cash sale end-to-end", () => {
 
     await page.goto(new URL("/sales", erpBaseURL).toString());
     await expect(page.getByRole("heading", { name: "Sales & billing" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Create invoice" })).toBeVisible();
 
     // Discover an active location and a GST-taxable, non-variant product with
     // standard stock. Restricting the first scenario to a simple stock unit
@@ -56,19 +57,20 @@ test.describe("SALE-001 · GST cash sale end-to-end", () => {
       Number(item.sellingPrice) > 0 &&
       !item.materialUnit &&
       item.variants.length === 0 &&
-      item.stockBalances.some((balance) => balance.variantId === null && Number(balance.quantity) >= 1)
+      item.stockBalances.some((balance) => balance.variantId === null && Number(balance.quantity) >= 1 && Number(balance.averageCost) > 0)
     );
 
     test.skip(!product,
       "No GST-taxable, non-variant product with at least one standard stock unit exists at the first active location.");
 
     const stock = product.stockBalances.find((balance) =>
-      balance.variantId === null && Number(balance.quantity) >= 1
+      balance.variantId === null && Number(balance.quantity) >= 1 && Number(balance.averageCost) > 0
     );
     const initialQuantity = Number(stock.quantity);
     const unitPrice = amount(product.sellingPrice);
     const expectedSubtotal = roundMoney(unitPrice);
     const expectedTax = roundMoney(expectedSubtotal * Number(product.gstPercentage) / 100);
+    test.skip(expectedTax <= 0, "Selected product price and GST rate produce no rounded tax amount for one unit.");
     const expectedTotal = roundMoney(expectedSubtotal + expectedTax);
 
     // Select the location and GST invoice type in the UI.
