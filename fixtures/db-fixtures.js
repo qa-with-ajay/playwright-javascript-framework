@@ -1,4 +1,4 @@
-import { test as base, expect } from "@playwright/test";
+import { test as base, expect } from "./erp-fixtures.js";
 import { PostgresReadOnlyClient } from "../services/database/postgresClient.js";
 
 export const test = base.extend({
