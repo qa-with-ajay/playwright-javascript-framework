@@ -111,4 +111,24 @@ npx playwright test tests/erp/sales/sales-api.spec.js
 npx playwright test tests/erp/database/database-connectivity.spec.js
 ```
 
-The sales creation UI test is deliberately not generated from assumed selectors or seeded IDs. Next, we will add stable product/location data discovery and the SALE-001 checkout flow against the actual local ERP.
+## Phase 4 — SALE-001 GST cash sale end-to-end
+
+Added `tests/erp/sales/sale-001-gst-cash-e2e.spec.js`. This scenario:
+
+1. Signs in through the ERP login UI.
+2. Discovers an active stock location and a GST-taxable, non-variant product with standard stock and a non-zero average cost.
+3. Creates a one-unit GST cash invoice through the sales UI.
+4. Verifies the persisted sale, payment, invoice line, stock balance, stock movement and stock ledger.
+5. Verifies the posted SALE and PAYMENT journals independently by account code and amount.
+
+Configure a user with both `billing.read` and `billing.manage` permissions. You can set `ERP_SALES_EMAIL`, `ERP_SALES_PASSWORD` and `ERP_SALES_ROLE_CODE`; otherwise the test falls back to the Group Admin credentials. The scenario chooses a walk-in customer and pays the invoice in full.
+
+Before running database-backed tests, create and seed a dedicated test database with an open accounting period, required system accounts and payment account mapping. Do not use a development or production database. In the private `.env.local`, set `DATABASE_URL` to a database whose name contains `test`, and set `ENABLE_DB_VERIFICATION=true`.
+
+Run the scenario:
+
+```bash
+npx playwright test tests/erp/sales/sale-001-gst-cash-e2e.spec.js
+```
+
+The test is data-driven: it discovers its location and eligible product at runtime and skips with a clear reason if the required fixture data is not present. It does not seed or mutate test data directly; the only business mutation is the sale created through the ERP UI.
