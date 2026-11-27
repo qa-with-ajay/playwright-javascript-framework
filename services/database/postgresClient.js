@@ -1,19 +1,19 @@
 import { Pool } from "pg";
 
-const MUTATING_SQL = /\\b(insert|update|delete|merge|alter|drop|truncate|create|grant|revoke|vacuum|refresh|call|copy)\\b/i;
+const MUTATING_SQL = /\b(insert|update|delete|merge|alter|drop|truncate|create|grant|revoke|vacuum|refresh|call|copy)\b/i;
 
 /**
  * Read-only PostgreSQL helper for cross-layer assertions.
- * It deliberately rejects common mutation statements and starts every query
- * in a READ ONLY transaction. Never point this at a production database.
+ * Every query runs in a READ ONLY transaction. Never point this at production.
  */
 export class PostgresReadOnlyClient {
   constructor(connectionString) {
     if (!connectionString) throw new Error("DATABASE_URL is required for PostgreSQL verification.");
-    const databaseName = new URL(connectionString).pathname.replace(/^\\//, "");
+
+    const databaseName = new URL(connectionString).pathname.replace(/^\/+/, "");
     if (!databaseName || !/(^|[_-])test($|[_-])/i.test(databaseName)) {
       throw new Error(
-        `Refusing database access to "${databaseName}". Use a dedicated database with "test" in its name (for example kb_erp_test).`
+        \`Refusing database access to "\${databaseName}". Use a dedicated database with "test" in its name (for example kb_erp_test).\`
       );
     }
 
@@ -27,7 +27,7 @@ export class PostgresReadOnlyClient {
   }
 
   async query(sql, params = []) {
-    if (typeof sql !== "string" || !/^\\s*(select|with)\\b/i.test(sql)) {
+    if (typeof sql !== "string" || !/^\s*(select|with)\b/i.test(sql)) {
       throw new Error("Database fixture permits SELECT queries only.");
     }
     if (MUTATING_SQL.test(sql)) {
