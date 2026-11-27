@@ -77,3 +77,38 @@ npx playwright test tests/erp/smoke.spec.js
 ```
 
 Credential-dependent cases are skipped until their test-account variables are configured. The tests are scaffolding until run against a seeded non-production ERP environment; the Unit Manager denial assertion should be aligned with the deployed route's actual authorization behavior if it differs.
+
+## Phase 3 — Sales API and PostgreSQL verification foundation
+
+New ERP support files:
+
+- `services/api/erpApiClient.js` — reusable API wrapper.
+- `fixtures/api-fixtures.js` — API fixture for tests.
+- `services/database/postgresClient.js` — parameterized, read-only PostgreSQL query helper.
+- `fixtures/db-fixtures.js` — opt-in database fixture with a test-database name guard.
+- `tests/erp/sales/sales-api.spec.js` — unauthenticated sales API access checks.
+- `tests/erp/database/database-connectivity.spec.js` — optional read-only database connectivity check.
+
+Install the new PostgreSQL driver and synchronize the npm lockfile:
+
+```bash
+npm install
+```
+
+Database verification is opt-in. Create a separate local database such as `kb_erp_test`; do not point automation at the working development or production database. Add the connection string to the private `.env.local` and set:
+
+```dotenv
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/kb_erp_test
+ENABLE_DB_VERIFICATION=true
+```
+
+The database fixture refuses database names that do not contain `test`, and exposes SELECT-only queries inside read-only transactions. It is not a substitute for a dedicated least-privilege PostgreSQL user. Create one with read-only grants for the tables used by assertions.
+
+Run the new foundation checks:
+
+```bash
+npx playwright test tests/erp/sales/sales-api.spec.js
+npx playwright test tests/erp/database/database-connectivity.spec.js
+```
+
+The sales creation UI test is deliberately not generated from assumed selectors or seeded IDs. Next, we will add stable product/location data discovery and the SALE-001 checkout flow against the actual local ERP.
