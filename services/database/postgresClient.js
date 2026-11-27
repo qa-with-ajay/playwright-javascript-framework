@@ -13,7 +13,8 @@ export class PostgresReadOnlyClient {
     const databaseName = new URL(connectionString).pathname.replace(/^\/+/, "");
     if (!databaseName || !/(^|[_-])test($|[_-])/i.test(databaseName)) {
       throw new Error(
-        \`Refusing database access to "\${databaseName}". Use a dedicated database with "test" in its name (for example kb_erp_test).\`
+        "Refusing database access to " + databaseName +
+        ". Use a dedicated database with 'test' in its name (for example kb_erp_test)."
       );
     }
 
