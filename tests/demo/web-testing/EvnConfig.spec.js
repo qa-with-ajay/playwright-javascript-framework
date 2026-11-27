@@ -1,4 +1,4 @@
-import { test, expect, config, logger } from '../../fixtures/test-fixtures';
+import { test, expect, config, logger } from '../../../fixtures/test-fixtures';
 
 
 test("How to handle env config", async({})=>{

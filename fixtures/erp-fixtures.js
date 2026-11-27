@@ -9,6 +9,7 @@ import config from "../config/globalConfig.js";
  */
 export const test = base.extend({
   erpBaseURL: async ({}, use) => {
+    console.log('consol', config.baseURL)
     if (!config.baseURL) {
       throw new Error(
         "ERP_BASE_URL (or BASE_URL) is not configured. Copy .env.example to .env.local and set the ERP URL."

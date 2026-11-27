@@ -1,4 +1,4 @@
-import { test, expect } from "../../fixtures/erp-fixtures.js";
+import { test, expect } from "../../../fixtures/erp-fixtures.js";
 
 const adminEmail = process.env.ERP_ADMIN_EMAIL;
 const adminPassword = process.env.ERP_ADMIN_PASSWORD;
@@ -29,7 +29,7 @@ test.describe("KB ERP smoke tests", () => {
     await page.locator('input[name="email"]').fill("invalid-smoke-user@example.invalid");
     await page.locator('input[name="password"]').fill("invalid-smoke-password");
     await page.getByRole("button", { name: "Sign in" }).click();
-    await expect(page.getByRole("alert")).toHaveText("Invalid email or password.");
+    await expect(page.locator('p[role=alert]')).toHaveText("Invalid email or password.");
   });
 
   test("Group Admin can sign in and open the dashboard", async ({ page, erpBaseURL }) => {
@@ -39,8 +39,8 @@ test.describe("KB ERP smoke tests", () => {
     await page.locator('input[name="email"]').fill(adminEmail);
     await page.locator('input[name="password"]').fill(adminPassword);
     await page.getByRole("button", { name: "Sign in" }).click();
-    await expect(page).toHaveURL(/\/dashboard(?:\?|$)/, { timeout: 20_000 });
-    await expect(page.getByRole("heading", { name: /Dashboard/ })).toBeVisible();
+    await expect(page).toHaveURL(/\/group-dashboard(?:\?|$)/, { timeout: 20_000 });
+    await expect(page.locator('header h1')).toHaveText('Group Dashboard');
     await expect(page.getByText("Inventory", { exact: true }).first()).toBeVisible();
   });
 
@@ -51,7 +51,7 @@ test.describe("KB ERP smoke tests", () => {
     await page.locator('input[name="email"]').fill(adminEmail);
     await page.locator('input[name="password"]').fill(adminPassword);
     await page.getByRole("button", { name: "Sign in" }).click();
-    await expect(page).toHaveURL(/\/dashboard(?:\?|$)/, { timeout: 20_000 });
+    await expect(page).toHaveURL(/\/group-dashboard(?:\?|$)/, { timeout: 20_000 });
 
     const response = await page.request.get(new URL("/api/inventory/products", erpBaseURL).toString());
     expect(response.status()).toBe(200);

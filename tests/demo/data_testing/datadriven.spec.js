@@ -1,6 +1,6 @@
 // login.spec.js
 import { test, expect } from '@playwright/test';
-import { readCSV, readJSON, readXLSX, getTestData, readXMLGeneric } from '../../utils/FileHelper'
+import { readCSV, readJSON, readXLSX, getTestData, readXMLGeneric } from '../../../utils/FileHelper'
 
 // // Load data from JSON
 // const usersJson = readJSON('./testdata/users.json');
