@@ -39,7 +39,12 @@ test.describe("SALE-001 · GST cash sale end-to-end", () => {
 
     await page.goto(new URL("/sales", erpBaseURL).toString());
     await expect(page.getByRole("heading", { name: "Create invoice" })).toBeVisible();
-
+    const customerSearch = page.getByLabel("Mobile number or customer name");
+    if (await customerSearch.isVisible().catch(() => false)) {
+      await customerSearch.fill(`PW Walk-in ${Date.now()}`);
+      await expect(page.getByText("No registered customer found.", { exact: false })).toBeVisible({ timeout: 10_000 });
+      await page.getByRole("button", { name: "Walk-in Customer" }).click();
+    }
     // Discover an active location and a simple GST product with available standard stock.
     const locationsResponse = await page.request.get(new URL("/api/sales/locations", erpBaseURL).toString());
     expect(locationsResponse.status()).toBe(200);

@@ -1,8 +1,9 @@
-import { test as base, expect } from "./erp-fixtures.js";
+import { test as base, expect, config } from "./erp-fixtures.js";
 import { PostgresReadOnlyClient } from "../services/database/postgresClient.js";
 
 export const test = base.extend({
   db: async ({}, use) => {
+    console.log('pritn',process.env.DATABASE_URL)
     const connectionString = process.env.DATABASE_URL;
     const explicitlyEnabled = process.env.ENABLE_DB_VERIFICATION === "true";
 

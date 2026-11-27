@@ -95,6 +95,7 @@ test.describe("SALE-001 · GST cash sale end-to-end", () => {
 
     // Product selection preallocates one standard stock unit. Set it explicitly
     // so the intended quantity is obvious and deterministic.
+    await page.locator('summary.flex').click();
     await page.locator('input[placeholder="Quantity to take"]').first().fill("1");
     await expect(page.getByText(expectedTotal.toFixed(2), { exact: false }).first()).toBeVisible();
 
@@ -106,7 +107,7 @@ test.describe("SALE-001 · GST cash sale end-to-end", () => {
     const invoiceUrl = new URL(page.url());
     const saleId = invoiceUrl.pathname.split("/").pop();
     await expect(page.getByText(product.name, { exact: false }).first()).toBeVisible();
-    await expect(page.getByText("GST", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText("GST %", { exact: true }).first()).toBeVisible();
 
     // Verify persisted records with SELECT-only queries against the dedicated
     // test database. All expected values are calculated independently above.

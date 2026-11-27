@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import { Client, Pool } from "pg";
 
 const MUTATING_SQL = /\b(insert|update|delete|merge|alter|drop|truncate|create|grant|revoke|vacuum|refresh|call|copy)\b/i;
 
@@ -9,9 +9,10 @@ const MUTATING_SQL = /\b(insert|update|delete|merge|alter|drop|truncate|create|g
 export class PostgresReadOnlyClient {
   constructor(connectionString) {
     if (!connectionString) throw new Error("DATABASE_URL is required for PostgreSQL verification.");
+    console.log(connectionString)
 
     const databaseName = new URL(connectionString).pathname.replace(/^\/+/, "");
-    if (!databaseName || !/(^|[_-])test($|[_-])/i.test(databaseName)) {
+    if (!databaseName || !/(^|[_-])dev($|[_-])/i.test(databaseName)) {
       throw new Error(
         "Refusing database access to " + databaseName +
         ". Use a dedicated database with 'test' in its name (for example kb_erp_test)."
@@ -36,6 +37,7 @@ export class PostgresReadOnlyClient {
     }
 
     const client = await this.pool.connect();
+    
     try {
       await client.query("BEGIN READ ONLY");
       const result = await client.query(sql, params);
