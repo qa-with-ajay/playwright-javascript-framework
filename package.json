@@ -16,7 +16,9 @@
     "cucumber": "cucumber-js --config cucumber.js",
     "test:sprint1": "playwright test tests/erp/auth tests/erp/security",
     "test:auth": "playwright test tests/erp/auth",
-    "test:security": "playwright test tests/erp/security"
+    "test:security": "playwright test tests/erp/security",
+    "test:categories": "playwright test tests/erp/master-data/categories/category-functional.spec.js",
+    "test:categories:headed": "playwright test tests/erp/master-data/categories/category-functional.spec.js --headed"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
