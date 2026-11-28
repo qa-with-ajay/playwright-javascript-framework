@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 
-const MUTATING_SQL = /\\b(insert|update|delete|merge|alter|drop|truncate|create|grant|revoke|vacuum|refresh|call|copy)\\b/i;
+const MUTATING_SQL = /\b(insert|update|delete|merge|alter|drop|truncate|create|grant|revoke|vacuum|refresh|call|copy)\b/i;
 
 /**
  * Read-only PostgreSQL helper for cross-layer assertions.
@@ -12,7 +12,7 @@ export class PostgresReadOnlyClient {
 
     let databaseName;
     try {
-      databaseName = new URL(connectionString).pathname.replace(/^\\/+/, "");
+      databaseName = new URL(connectionString).pathname.replace(/^\/+/, "");
     } catch {
       throw new Error("DATABASE_URL must be a valid PostgreSQL connection URL.");
     }
@@ -34,7 +34,7 @@ export class PostgresReadOnlyClient {
   }
 
   async query(sql, params = []) {
-    if (typeof sql !== "string" || !/^\\s*(select|with)\\b/i.test(sql)) {
+    if (typeof sql !== "string" || !/^\s*(select|with)\b/i.test(sql)) {
       throw new Error("Database fixture permits SELECT queries only.");
     }
     if (MUTATING_SQL.test(sql)) {
