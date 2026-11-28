@@ -398,7 +398,9 @@ test.describe("Sprint 2 — Categories: create, edit and status lifecycle (opt-i
     const original = categoryTestName("DUP_EDIT");
     await categories.create(original);
     await categories.expectNotice("Categories created.");
-    const existing = await firstCategoryName(categories);
+    const otherRow = categories.rows.filter({ hasNotText: original }).first();
+    test.skip(await otherRow.count() === 0, "Duplicate-rename test requires another existing category in this business unit.");
+    const existing = (await otherRow.locator("td").first().innerText()).trim();
     await categories.rowFor(original).getByRole("button", { name: "Edit" }).click();
     await categories.nameInput.fill(existing);
     await page.getByRole("button", { name: "Save changes" }).click();
