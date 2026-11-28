@@ -1,21 +1,26 @@
-import { Client, Pool } from "pg";
+import { Pool } from "pg";
 
-const MUTATING_SQL = /\b(insert|update|delete|merge|alter|drop|truncate|create|grant|revoke|vacuum|refresh|call|copy)\b/i;
+const MUTATING_SQL = /\\b(insert|update|delete|merge|alter|drop|truncate|create|grant|revoke|vacuum|refresh|call|copy)\\b/i;
 
 /**
  * Read-only PostgreSQL helper for cross-layer assertions.
- * Every query runs in a READ ONLY transaction. Never point this at production.
+ * It refuses all database names that are not explicitly test databases.
  */
 export class PostgresReadOnlyClient {
   constructor(connectionString) {
     if (!connectionString) throw new Error("DATABASE_URL is required for PostgreSQL verification.");
-    console.log(connectionString)
 
-    const databaseName = new URL(connectionString).pathname.replace(/^\/+/, "");
-    if (!databaseName || !/(^|[_-])dev($|[_-])/i.test(databaseName)) {
+    let databaseName;
+    try {
+      databaseName = new URL(connectionString).pathname.replace(/^\\/+/, "");
+    } catch {
+      throw new Error("DATABASE_URL must be a valid PostgreSQL connection URL.");
+    }
+
+    if (!databaseName || !/(^|[_-])test($|[_-])/i.test(databaseName)) {
       throw new Error(
-        "Refusing database access to " + databaseName +
-        ". Use a dedicated database with 'test' in its name (for example kb_erp_test)."
+        "Refusing database access to " + (databaseName || "<unknown>") +
+        ". Use a dedicated database with 'test' as a name segment (for example kb_erp_test)."
       );
     }
 
@@ -29,7 +34,7 @@ export class PostgresReadOnlyClient {
   }
 
   async query(sql, params = []) {
-    if (typeof sql !== "string" || !/^\s*(select|with)\b/i.test(sql)) {
+    if (typeof sql !== "string" || !/^\\s*(select|with)\\b/i.test(sql)) {
       throw new Error("Database fixture permits SELECT queries only.");
     }
     if (MUTATING_SQL.test(sql)) {
@@ -37,7 +42,6 @@ export class PostgresReadOnlyClient {
     }
 
     const client = await this.pool.connect();
-    
     try {
       await client.query("BEGIN READ ONLY");
       const result = await client.query(sql, params);
