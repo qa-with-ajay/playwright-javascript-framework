@@ -155,6 +155,7 @@ test.describe("Sprint 2 — Categories: read-only UI functional tests", () => {
     await categories.open();
     await categories.status.selectOption("false");
     const statuses = await categories.rows.locator("td").nth(2).allInnerTexts();
+    test.skip(statuses.length === 0, "No inactive categories exist in the selected business unit.");
     for (const status of statuses) expect(status.trim()).toBe("Inactive");
   });
 
@@ -227,16 +228,40 @@ test.describe("Sprint 2 — Categories: read-only UI functional tests", () => {
     const totalText = await page.getByText(/\d+ total/).innerText();
     test.skip(Number(totalText.match(/\d+/)?.[0] || 0) <= 10, "Requires more than 10 categories.");
     await page.getByRole("button", { name: "Next" }).click();
-    await categories.status.selectOption("all");
+    await categories.status.selectOption("true");
     await expect(page.getByText("Page 1 of", { exact: false })).toBeVisible();
   });
 
   test("CAT-039: Escape closes the category status confirmation dialog without changing data", async ({ page }) => {
-    test.skip(true, "Status mutation tests are intentionally excluded from the read-only batch.");
+    requireAccount(admin, "inventory manager");
+    await login(page, admin);
+    const categories = new CategoryPage(page);
+    await categories.open();
+    const row = categories.rows.filter({ has: page.getByRole("button", { name: "Deactivate" }) }).first();
+    await expect(row).toBeVisible();
+    const originalName = (await row.locator("td").first().innerText()).trim();
+    await row.getByRole("button", { name: "Deactivate" }).click();
+    await expect(page.getByRole("alertdialog")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("alertdialog")).toHaveCount(0);
+    await expect(categories.rowFor(originalName)).toContainText("Active");
   });
 
   test("CAT-040: clicking the confirmation backdrop closes it without changing data", async ({ page }) => {
-    test.skip(true, "Status mutation tests are intentionally excluded from the read-only batch.");
+    requireAccount(admin, "inventory manager");
+    await login(page, admin);
+    const categories = new CategoryPage(page);
+    await categories.open();
+    const row = categories.rows.filter({ has: page.getByRole("button", { name: "Deactivate" }) }).first();
+    await expect(row).toBeVisible();
+    const originalName = (await row.locator("td").first().innerText()).trim();
+    await row.getByRole("button", { name: "Deactivate" }).click();
+    const dialog = page.getByRole("alertdialog");
+    await expect(dialog).toBeVisible();
+    const backdrop = page.locator("div.fixed.inset-0").filter({ has: dialog });
+    await backdrop.click({ position: { x: 2, y: 2 } });
+    await expect(dialog).toHaveCount(0);
+    await expect(categories.rowFor(originalName)).toContainText("Active");
   });
 });
 
