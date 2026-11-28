@@ -32,7 +32,8 @@ test.describe("AUTH — authentication and session boundary", () => {
     const sessionResponse = await page.request.get("/api/auth/session");
     expect(sessionResponse.ok()).toBeTruthy();
     const session = await sessionResponse.json();
-    expect(session.user).toBeUndefined();
+    console.log('print',session)
+    expect(session).toBeNull();
   });
 
   test("AUTH-004: protected page and APIs reject an unauthenticated browser", async ({ page, request }) => {

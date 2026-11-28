@@ -16,7 +16,7 @@ export async function signInThroughUI(page, { roleCode, email, password }) {
   await page.getByRole("button", { name: "Sign in" }).click();
 
   await expect(page).not.toHaveURL(/\/login(?:\?|$)/, { timeout: 20_000 });
-  await expect(page).toHaveURL(/\/(?:post-login|group-dashboard|dashboard|inventory)(?:\/|\?|$)/, { timeout: 20_000 });
+  await expect(page).toHaveURL(/\/(?:post-login|dashboard|inventory)(?:\/|\?|$)/, { timeout: 20_000 });
 }
 
 export function requireCredentials(test, { email, password }, label) {
