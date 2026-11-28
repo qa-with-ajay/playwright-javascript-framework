@@ -1,5 +1,5 @@
 import { test, expect } from "../../../../fixtures/erp-fixtures.js";
-import { signInThroughUI } from "../../../helpers/auth.js";
+import { signInThroughUI } from "../../helpers/auth.js";
 import { CategoryPage, categoryTestName } from "../../../../pageobjects/CategoryPage.js";
 
 const admin = {
