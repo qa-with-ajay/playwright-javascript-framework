@@ -13,7 +13,10 @@
     "report": "playwright show-report",
     "allure:generate": "allure generate ./allure-results --clean -o ./allure-report",
     "allure:open": "allure open ./allure-report",
-    "cucumber": "cucumber-js --config cucumber.js"
+    "cucumber": "cucumber-js --config cucumber.js",
+    "test:sprint1": "playwright test tests/erp/auth tests/erp/security",
+    "test:auth": "playwright test tests/erp/auth",
+    "test:security": "playwright test tests/erp/security"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
